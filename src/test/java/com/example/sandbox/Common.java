@@ -18,10 +18,7 @@ public class Common extends Endpoints {
     @BeforeMethod(alwaysRun = true)
     public void baseBeforeMethod(ITestContext context) {filter = new ReportingFilter(context);}
 
-    //----------------------------------GET----------------------------------
     public Response getUrl(String endpoint){
-
-
         return given()
                 .relaxedHTTPSValidation()
                 .and()
@@ -30,11 +27,9 @@ public class Common extends Endpoints {
                 .get(baseUrl+endpoint)
                 .then()
                 .extract().response();
-
     }
+
     public Response getUrl(String endpoint, Map<String, String> queryParam ){
-
-
         return given()
                 .relaxedHTTPSValidation()
                 .headers("correlationId","testCorrelid")
@@ -48,11 +43,9 @@ public class Common extends Endpoints {
                 .get(baseUrl+endpoint)
                 .then()
                 .extract().response();
-
     }
-    public Response getUrl(String endpoint,Map<String, String> headers,Map<String, String> queryParam ){
 
-
+    public Response getUrl(String endpoint, Map<String, String> headers, Map<String, String> queryParam ){
         return given()
                 .relaxedHTTPSValidation()
                 .params(queryParam)
@@ -63,13 +56,9 @@ public class Common extends Endpoints {
                 .get(baseUrl+endpoint)
                 .then()
                 .extract().response();
-
     }
 
-    //----------------------------------POST----------------------------------
-    public Response postUrl(String endpoint,String body){
-
-
+    public Response postUrl(String endpoint, String body){
         return given()
                 .relaxedHTTPSValidation()
                 .contentType("application/json; charset=UTF-8")
@@ -80,11 +69,29 @@ public class Common extends Endpoints {
                 .post(baseUrl+endpoint)
                 .then()
                 .extract().response();
-
     }
 
-    //----------------------------------PUT----------------------------------
+    public Response putUrl(String endpoint, String body){
+        return given()
+                .relaxedHTTPSValidation()
+                .contentType("application/json; charset=UTF-8")
+                .body(body)
+                .and()
+                .filter(filter)
+                .when()
+                .put(baseUrl+endpoint)
+                .then()
+                .extract().response();
+    }
 
-    //----------------------------------DELETE----------------------------------
+    public Response deleteUrl(String endpoint){
+        return given()
+                .relaxedHTTPSValidation()
+                .and()
+                .filter(filter)
+                .when()
+                .delete(baseUrl+endpoint)
+                .then()
+                .extract().response();
+    }
 }
-
