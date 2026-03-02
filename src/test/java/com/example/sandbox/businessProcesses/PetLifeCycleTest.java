@@ -18,11 +18,11 @@ import static com.example.sandbox.util.constans.Tags.SMOKE;
 import static com.example.sandbox.util.constans.TestData.HYDRAIMAGE;
 
 @Listeners(TestListener.class)
-public class PetLifeCycle extends Common {
+public class PetLifeCycleTest extends Common {
 
-    private static final Logger log = LogManager.getLogger(PetLifeCycle.class);
+    private static final Logger log = LogManager.getLogger(PetLifeCycleTest.class);
 
-    @Test(enabled = true, groups = {SMOKE}, description = "Pet lifecycle - create, update, delete, verify")
+    @Test(enabled = true, groups = {SMOKE}, description = "Pet lifecycle - create, update, getById, delete, getById")
     public void testPetLifeCycle(){
         int petId = generateRandomNumber();
 
@@ -74,16 +74,24 @@ public class PetLifeCycle extends Common {
             log.warn("Update response time exceeded 500ms: " + updateResponse.getTime() + "ms");
         }
 
+        Response getAfterUpdateResponse = getUrl(petById.replace("{petId}", String.valueOf(petId)));
+        Assert.assertEquals(getAfterUpdateResponse.getStatusCode(), 200, "GetById after update - invalid response code");
+        Assert.assertEquals(getAfterUpdateResponse.jsonPath().get("name"), "PrincessUpdated", "GetById after update - name mismatch");
+        Assert.assertEquals(getAfterUpdateResponse.jsonPath().get("status"), "pending", "GetById after update - status mismatch");
+        if (getAfterUpdateResponse.getTime() > 500) {
+            log.warn("GetById after update response time exceeded 500ms: " + getAfterUpdateResponse.getTime() + "ms");
+        }
+
         Response deleteResponse = deleteUrl(petById.replace("{petId}", String.valueOf(petId)));
         Assert.assertEquals(deleteResponse.getStatusCode(), 200, "Delete - invalid response code");
         if (deleteResponse.getTime() > 500) {
             log.warn("Delete response time exceeded 500ms: " + deleteResponse.getTime() + "ms");
         }
 
-        Response verifyResponse = getUrl(petById.replace("{petId}", String.valueOf(petId)));
-        Assert.assertEquals(verifyResponse.getStatusCode(), 404, "Verify - pet should not exist after delete");
-        if (verifyResponse.getTime() > 500) {
-            log.warn("Verify response time exceeded 500ms: " + verifyResponse.getTime() + "ms");
+        Response getAfterDeleteResponse = getUrl(petById.replace("{petId}", String.valueOf(petId)));
+        Assert.assertEquals(getAfterDeleteResponse.getStatusCode(), 404, "GetById after delete - pet should not exist");
+        if (getAfterDeleteResponse.getTime() > 500) {
+            log.warn("GetById after delete response time exceeded 500ms: " + getAfterDeleteResponse.getTime() + "ms");
         }
     }
 }
