@@ -28,7 +28,9 @@ public class ReportingFilter implements Filter {
 
     public ReportingFilter(ITestContext context) {
         this.reporter = (Reporter) context.getAttribute(Reporter.REPORTER);
-        this.testName = context.getCurrentXmlTest().getName();
+        this.testName = context.getAllTestMethods().length > 0
+                ? context.getAllTestMethods()[0].getRealClass().getSimpleName()
+                : context.getCurrentXmlTest().getName();
     }
 
     private void report(String requestParams, String requestBody, String responseParams, String responseBody) {
